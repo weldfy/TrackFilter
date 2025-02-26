@@ -5,8 +5,6 @@
 #include <vector>
 #include <iomanip>
 
-using namespace std;
-
 long double calculateDistance(long double lat1, long double lon1, long double lat2, long double lon2) {
     const long double earthRadius = 6372.795;
     long double angularDistance;
