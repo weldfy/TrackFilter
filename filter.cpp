@@ -20,30 +20,30 @@ struct Point {
     long double lon;
 };
 
-vector<Point> parseKML(const string& filename) {
-    vector<Point> track;
-    ifstream file(filename);
-    string line;
-    string startTag = "<coordinates>";
-    string endTag = "</coordinates>";
+std::vector<Point> parseKML(const std::string& filename) {
+    std::vector<Point> track;
+    std::ifstream file(filename);
+    std::string line;
+    std::string startTag = "<coordinates>";
+    std::string endTag = "</coordinates>";
     bool calc = false;
     
     while (getline(file, line)) {
         size_t startPos = line.find(startTag);
-        if (startPos != string::npos) {
+        if (startPos != std::string::npos) {
             line = line.substr(startPos + startTag.size());
             calc = true;
         }
 
         size_t endPos = line.find(endTag);
         bool stop = false;
-        if (endPos != string::npos) {
+        if (endPos != std::string::npos) {
             line = line.substr(0, endPos);
             stop = true;
         }
 
         if (calc) {
-            istringstream ss(line);
+            std::istringstream ss(line);
             long double lon, lat;
             char c;
             while (ss >> lon >> c >> lat) {
@@ -61,8 +61,8 @@ vector<Point> parseKML(const string& filename) {
     return track;
 }
 
-void writeKML(const vector<Point>& filteredTrack, const string& filename) {
-    ofstream file(filename);
+void writeKML(const std::vector<Point>& filteredTrack, const std::string& filename) {
+    std::ofstream file(filename);
     file << R"(<?xml version="1.0" encoding="UTF-8"?>
 <kml xmlns="http://earth.google.com/kml/2.2">
     <Document>
@@ -84,7 +84,7 @@ void writeKML(const vector<Point>& filteredTrack, const string& filename) {
         if (!fl) {
             file << " ";
         }
-        file << fixed << setprecision(9) << p.lon * 180.0 / M_PI << "," << p.lat * 180.0 / M_PI;
+        file << std::fixed << std::setprecision(9) << p.lon * 180.0 / M_PI << "," << p.lat * 180.0 / M_PI;
         fl = false;
     }
 
@@ -98,8 +98,8 @@ void writeKML(const vector<Point>& filteredTrack, const string& filename) {
     )";
 }
 
-vector<Point> filterTrack(const vector<Point>& track, long double distance) {
-    vector<Point> filteredTrack;
+std::vector<Point> filterTrack(const std::vector<Point>& track, long double distance) {
+    std::vector<Point> filteredTrack;
     if (track.empty()) {
         return filteredTrack;
     }
@@ -119,21 +119,21 @@ vector<Point> filterTrack(const vector<Point>& track, long double distance) {
 int main(int argc, char* argv[]) {
 
     if (argc < 4) {
-        cout << "Usage: " << argv[0] << " <input KML file> <output KML file> <min distance>" << endl;
+        std::cout << "Usage: " << argv[0] << " <input KML file> <output KML file> <min distance>" << std::endl;
         return 1;
     }
 
-    string inputFile = argv[1];
-    string outputFile = argv[2];
+    std::string inputFile = argv[1];
+    std::string outputFile = argv[2];
     long double distance = atof(argv[3]);
 
-    vector<Point> track = parseKML(inputFile);
-    vector<Point> filteredTrack = filterTrack(track, distance);
+    std::vector<Point> track = parseKML(inputFile);
+    std::vector<Point> filteredTrack = filterTrack(track, distance);
     writeKML(filteredTrack, outputFile);
 
-    cout << "Number of points in the original track: " << track.size() << endl;
-    cout << "Number of points in the filtered track: " << filteredTrack.size() << endl;
-    cout << "Minimum distance between points: " << distance << " km" << endl;
+    std::cout << "Number of points in the original track: " << track.size() << std::endl;
+    std::cout << "Number of points in the filtered track: " << filteredTrack.size() << std::endl;
+    std::cout << "Minimum distance between points: " << distance << " km" << std::endl;
 
     return 0;
 }
